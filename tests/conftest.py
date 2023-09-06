@@ -1,4 +1,5 @@
 import os
+
 import pytest
 
 from dotenv import load_dotenv
@@ -24,12 +25,17 @@ def load_env():
 
 @pytest.fixture(scope="function", autouse=True)
 def setup_browser(request):
+    options = Options()
+
+    options.add_argument("window-size=2800,1400")
+    browser.config.base_url = "https://demoqa.com"
+
     browser_version = request.config.getoption("--browser_version")
     browser_url = request.config.getoption("--browser_url")
     browser_version = (
         browser_version if browser_version != "" else DEFAULT_BROWSER_VERSION
     )
-    options = Options()
+
     selenoid_capabilities = {
         "browserName": "chrome",
         "browserVersion": browser_version,
@@ -55,10 +61,3 @@ def setup_browser(request):
     attach.add_video(browser)
 
     browser.quit()
-
-
-@pytest.fixture(scope="function", autouse=True)
-def open_new_browser():
-    browser.config.base_url = "https://demoqa.com"
-    browser.config.window_width = 1400
-    browser.config.window_height = 2800
