@@ -14,6 +14,7 @@ DEFAULT_BROWSER_VERSION = "100.0"
 
 def pytest_addoption(parser):
     parser.addoption("--browser_version", default="100.0")
+    parser.addoption("--browser_url")
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -24,6 +25,7 @@ def load_env():
 @pytest.fixture(scope="function", autouse=True)
 def setup_browser(request):
     browser_version = request.config.getoption("--browser_version")
+    browser_url = request.config.getoption("--browser_url")
     browser_version = (
         browser_version if browser_version != "" else DEFAULT_BROWSER_VERSION
     )
@@ -39,7 +41,7 @@ def setup_browser(request):
     password = os.getenv("PASSWORD")
 
     driver = webdriver.Remote(
-        command_executor=f"https://{login}:{password}@selenoid.autotests.cloud/wd/hub",
+        command_executor=f"https://{login}:{password}@{browser_url}",
         options=options,
     )
 
